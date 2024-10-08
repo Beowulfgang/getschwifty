@@ -21,6 +21,7 @@ jobs:
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
           docker build -t ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG} .
           docker push ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG}
+          docker push ${{ secrets.DOCKER_USERNAME }}/getschwifty:latest
       - name: Scan Docker image for vulnerabilities
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
