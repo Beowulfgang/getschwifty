@@ -19,11 +19,11 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/python-app:${IMAGE_TAG} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG} .
       - name: Scan Docker image for vulnerabilities
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-          ./trivy image --severity HIGH,CRITICAL --exit-code 1 ${{ secrets.DOCKER_USERNAME }}/python-app:${IMAGE_TAG}
+          trivy image --severity HIGH,CRITICAL --exit-code 1 ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG}
       - name: Push Docker image to Docker Hub
         if: success() # Only push if the scan is successful
         run: |
