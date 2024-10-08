@@ -1,4 +1,4 @@
-# Project Name
+# Project GetSchwifty
 
 ## Project Overview
 
@@ -13,7 +13,7 @@
 
 
 ## DockerHublink: 
--https://hub.docker.com/repository/docker/beowulfgang/getschwifty
+https://hub.docker.com/repository/docker/beowulfgang/getschwifty
 ## Buildtime:	
 - 61.1s
 
@@ -26,7 +26,7 @@
 ## What would you do to avoid deploying malicious packages?	
 - Scan the image prior to deploying the envioronment, and require dependencies on the future builds for the scan to pass, along with having a manual deployment process to separate the CI and CD.
 ## K8s Deploy command:	
-kubectl create deployment nginx --image=getschwifty -- /bin/sh -c "while true; do sleep 30; done;"
+- kubectl create deployment nginx --image=getschwifty -- /bin/sh -c "while true; do sleep 30; done;"
 
 ## Expose the deployed resource:
 -	kubectl expose deployment nginx --type=LoadBalancer --port=80 --target-port=9000
