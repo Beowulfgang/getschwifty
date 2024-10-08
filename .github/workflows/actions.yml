@@ -27,5 +27,5 @@ jobs:
       - name: Push Docker image to Docker Hub
         if: success() # Only push if the scan is successful
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/python-app:${IMAGE_TAG}
+          docker push ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG}
 
