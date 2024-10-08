@@ -1,14 +1,12 @@
-FROM python:3.9-slim
+FROM ubuntu:20.04
 
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    software-properties-common curl gnupg dirmngr libcurl4-openssl-dev libssl-dev && \
+    apt-get install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
-    apt-get install -y python2.7 python2.7-dev r-base && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y python2.7 python2.7-dev python3 curl gnupg dirmngr libcurl4-openssl-dev libssl-dev r-base
 
 COPY . /app
 EXPOSE 9000
