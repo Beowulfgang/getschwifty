@@ -1,35 +1,8 @@
 # Project Name
 
 ## Project Overview
-- **Project Goal**: _Brief description of what you're trying to achieve._
-- **Deadline**: _Date of submission/goal completion._
-- **Technologies/Tools Required**: _List of programming languages, frameworks, and tools used._
 
 ---
-
-## Preparation
-- **Task Understanding**: 
-  - _Summarize the requirements of the project._
-  - _Clarify any assumptions or open questions._
-- **Project Plan**: 
-  - _Break down tasks into manageable pieces._
-  - _Assign approximate time estimates for each task._
-
----
-
-## Resources
-- **Documentation**: 
-  - _Links to official docs or important guides you'll use._
-- **Libraries**: 
-  - _List of libraries/tools and why you're using them._
-  - _Installation commands if necessary._
-- **Tutorials/Guides**: 
-  - _Any useful links to tutorials or references._
-- **Other Assets**: 
-  - _Data sets, designs, or code snippets you’ll refer to._
-
----
-
 ## Environment Setup
 - **IDE/Code Editor**: 
   - VSCode
@@ -38,77 +11,26 @@
 - **Dependencies**: 
 ---
 
-## Commands
-- **Key Commands**: 
-  - _List any key commands used to build, run, and test the project:_
-    ```bash
-    npm run build    # Build the project
-    npm start        # Start local dev server
-    pytest           # Run unit tests
-    ```
----
 
-## Feature Breakdown
-### Feature 1
-- **Description**: _Brief description of the feature._
-- **Commands**: 
-    ```bash
-    # Example command to run this feature
-    npm run feature1
-    ```
-- **Resources/Screenshots**: 
-    - _Include any references or screenshots for the feature._
+## DockerHublink: 
+-https://hub.docker.com/repository/docker/beowulfgang/getschwifty
+## Buildtime:	
+- 61.1s
 
-### Feature 2
-- **Description**: _Brief description of the feature._
-- **Commands**: 
-    ```bash
-    # Example command to run this feature
-    npm run feature2
-    ```
-- **Resources/Screenshots**: 
-    - _Include any references or screenshots for the feature._
+## What can I do to improve:	
+- I'd cache the build either in S3 storage or some form of caching. I could also change the build image to something slimmer. 
 
----
+## Link to Scanned Report:	
+## Remediate the CVE:	
 
-## Testing
-- **Unit Tests**: 
-  - _Describe test coverage and test files used._
-  - _Commands to run tests:_
-    ```bash
-    npm test   # Run tests
-    ```
-- **Manual Testing**: 
-  - _How will you manually test the features?_
-- **Error Handling**: 
-  - _List how errors and exceptions are being handled._
+## What would you do to avoid deploying malicious packages?	
+- Scan the image prior to deploying the envioronment, and require dependencies on the future builds for the scan to pass, along with having a manual deployment process to separate the CI and CD.
+## K8s Deploy command:	
+kubectl create deployment nginx --image=getschwifty -- /bin/sh -c "while true; do sleep 30; done;"
 
----
+## Expose the deployed resource:
+-	kubectl expose deployment nginx --type=LoadBalancer --port=80 --target-port=9000
 
-## Screenshots
-- **Setup Screenshots**: 
-  - _Screenshots showing successful project setup or environment working._
-- **Feature Screenshots**: 
-  - _Screenshots/GIFs showcasing the main features in action._
-- **Test Screenshots**: 
-  - _Screenshots of passing tests (if applicable)._
-
----
-
-## Challenges/Issues
-- **Challenges Faced**: 
-  - _Describe any blockers or technical issues encountered._
-  - _How you resolved or plan to resolve them._
-
----
-
-## Reflection
-- **Lessons Learned**: 
-  - _What did you learn from working on this project?_
-  - _What would you improve if you had more time?_
-
----
-
-## Author
-- **Name**: _Your Name Here_
-- **Contact Info**: _Your Email/LinkedIn (Optional)_
+## How would you monitor the above deployment? Explain or implement the tools that you would use
+- I'd use slack/teams to push notifications of the failures and this built into the pipeline. 
+- Using tools like Newrelic or Datadog, ArgoCD. Grafana & Preometheus once the application was deployed.
