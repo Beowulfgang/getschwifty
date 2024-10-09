@@ -1,6 +1,28 @@
-name: Build and Scan Docker Image
+name: Build, Scan, and Deploy Docker Image
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:  # Allows manual trigger with inputs
+    inputs:
+      base_image:
+        description: 'Select the base image for Docker'
+        default: 'ubuntu:latest'
+        required: true
+      packages:
+        description: 'Additional packages to include (comma-separated)'
+        default: 'curl,git'
+        required: true
+      cpu_request:
+        description: 'CPU request for K8s deployment'
+        default: '500m'
+        required: true
+      memory_request:
+        description: 'Memory request for K8s deployment'
+        default: '256Mi'
+        required: true
+      gpu_request:
+        description: 'GPU request for K8s deployment'
+        default: '1'
+        required: false
 
 jobs:
   build:
@@ -27,8 +49,87 @@ jobs:
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
           ./bin/trivy image --severity LOW,MEDIUM,HIGH,CRITICAL --exit-code 1 ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG}
-      - name: Push Docker image to Docker Hub
-        if: success() # Only push if the scan is successful
+          
+  deploy:
+    needs: build  
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.29.0
+
+      - name: Deploy to Kubernetes
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG}
+          IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+          CPU_REQUEST=${{ github.event.inputs.cpu_request }}
+          MEMORY_REQUEST=${{ github.event.inputs.memory_request }}
+          GPU_REQUEST=${{ github.event.inputs.gpu_request }}
+
+          # Create Kubernetes manifest
+          cat <<EOF > deployment.yaml
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: schwifty-app
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: schwifty
+            template:
+              metadata:
+                labels:
+                  app: schwifty
+              spec:
+                containers:
+                - name: schwifty-container
+                  image: ${{ secrets.DOCKER_USERNAME }}/getschwifty:${IMAGE_TAG}
+                  resources:
+                    requests:
+                      memory: "$MEMORY_REQUEST"
+                      cpu: "$CPU_REQUEST"
+                      nvidia.com/gpu: "$GPU_REQUEST"
+          EOF
+
+          # Apply the deployment manifest to Kubernetes
+          kubectl apply -f deployment.yaml
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform/
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan \
+          -var="subdomain=${{ github.head_ref }}.getschwifty.com" \
+          -var="zone_name=getschiwfty.com" \
+          -var="load_balancer_dns=${{ steps.lb_dns.outputs.dns_name }}" \
+          -out=tfplan
+        working-directory: terraform/
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+        working-directory: terraform/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
+      - name: Output DNS Info
+        run: |
+          echo "DNS records updated successfully."
+
 
