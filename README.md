@@ -20,8 +20,27 @@ https://hub.docker.com/repository/docker/beowulfgang/getschwifty
 ## What can I do to improve:	
 - I'd cache the build either in S3 storage or some form of caching. I could also change the build image to something slimmer. 
 
-## Link to Scanned Report:	
+## Scanned Report:	
+=======================================
+Total: 3 (HIGH: 3, CRITICAL: 0)
+┌────────────────┬────────────────┬──────────┬──────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────────┐
+│    Library     │ Vulnerability  │ Severity │  Status  │ Installed Version │ Fixed Version │                          Title                           │
+├────────────────┼────────────────┼──────────┼──────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────────┤
+│ linux-libc-dev │ CVE-2023-0461  │ HIGH     │ affected │ 5.4.0-196.216     │               │ kernel: net/ulp: use-after-free in listening ULP sockets │
+│                │                │          │          │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0461                │
+│                ├────────────────┤          │          │                   ├───────────────┼──────────────────────────────────────────────────────────┤
+│                │ CVE-2023-20569 │          │          │                   │               │ amd: Return Address Predictor vulnerability leading to   │
+│                │                │          │          │                   │               │ information disclosure                                   │
+│                │                │          │          │                   │               │ https://avd.aquasec.com/nvd/cve-2023-20569               │
+│                ├────────────────┤          │          │                   ├───────────────┼──────────────────────────────────────────────────────────┤
+│                │ CVE-2023-21400 │          │          │                   │               │ kernel: io_uring: io_defer_entry object double free      │
+│                │                │          │          │                   │               │ vulnerability                                            │
+│                │                │          │          │                   │               │ https://avd.aquasec.com/nvd/cve-2023-21400               │
+└────────────────┴────────────────┴──────────┴──────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────────┘
+
 ## Remediate the CVE:	
+
+
 
 ## What would you do to avoid deploying malicious packages?	
 - Scan the image prior to deploying the envioronment, and require dependencies on the future builds for the scan to pass, along with having a manual deployment process to separate the CI and CD.
