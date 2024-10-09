@@ -7,9 +7,8 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get install -y python2.7 python2.7-dev python3 curl gnupg dirmngr libcurl4-openssl-dev libssl-dev r-base \
-    apt-get upgrade \
-    apt-get dist-upgrade
-RUN uname -r
+    apt-get upgrade -y 
+
 
 COPY . /app
 EXPOSE 9000
