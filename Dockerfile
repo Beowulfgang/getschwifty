@@ -1,4 +1,4 @@
-FROM ubuntu:20.1
+FROM ubuntu:20.10
 
 WORKDIR /app
 
